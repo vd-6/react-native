@@ -32,16 +32,32 @@ const App = () => {
 
       onNotification: notification => {
         console.log('notification');
-        // consolejson(notification);
-        // PushNotification.localNotification({
-        //   title,
-        //   message,
-        // });
-        //add condition to check the notification type
-        const {data} = notification;
-        if (data?.type === 'navigate') {
+
+        const {
+          data,
+          userInteraction,
+          foreground,
+          id,
+          channelId,
+          title = 'default',
+          message = 'default',
+        } = notification;
+
+        // consolejson({notification});
+        if (userInteraction && data?.type === 'navigate') {
           const {screen, params} = data;
           navRef.current.navigate(screen, JSON.parse(params));
+          return;
+        }
+        const localNotification = {
+          id,
+          channelId,
+          title,
+          message,
+          data,
+        };
+        if (foreground) {
+          PushNotification.localNotification(localNotification);
         }
       },
       onAction: function (notification) {
